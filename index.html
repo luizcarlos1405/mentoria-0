@@ -1,0 +1,32 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script
+      src="https://unpkg.com/htmx.org@1.9.2"
+      integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
+      crossorigin="anonymous"
+    ></script>
+    <title>Joões</title>
+  </head>
+  <body>
+    <main>
+      <h1>Mentoria dos Joões</h1>
+
+      <section>
+        <h2>Chat</h2>
+        <div id="messages"></div>
+        <div>
+          <form
+            hx-target="#messages"
+            hx-post="/new-message"
+            hx-trigger="submit"
+            hx-swap="beforeend"
+          >
+            <input type="text" name="message" />
+            <button>Enviar</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
