@@ -14,7 +14,7 @@
 
       <section>
         <h2>Chat</h2>
-        <div id="messages"></div>
+        <div id="messages" hx-get="/messages" hx-trigger="every 1s"></div>
         <div>
           <form
             hx-target="#messages"

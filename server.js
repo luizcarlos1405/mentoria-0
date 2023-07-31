@@ -1,7 +1,8 @@
 const fs = require("fs");
+const messages = [];
 
-var express = require("express");
-var app = express();
+const express = require("express");
+const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,16 +20,15 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/recurso", function (req, res) {
-  res.writeHead(200, { "Content-Type": "text/html" });
-  res.end('<h1 style="color: red">Hola Mundo</h1>');
+app.get("/messages", function (req, res) {
+  res.set({ "Content-Type": "text/html" });
+  let messagesHtml = messages.map((message) => `<p>${message}</p>`).join("");
+  res.send(messagesHtml);
 });
 
 app.post("/new-message", function (req, res) {
-  res.writeHead(200, { "Content-Type": "text/html" });
-
-  res.end(`<p>${req.body.message}</p>`);
-  return;
+  messages.push(req.body.message);
+  res.sendStatus(200);
 });
 
 const port = 3000;
