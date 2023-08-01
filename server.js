@@ -1,9 +1,14 @@
 const fs = require("fs");
 const messages = [];
+let bmessages = fs.readFileSync("b-messages.json").toString();
+let bmessages2 = "";
+
+bmessages = JSON.parse(bmessages); //bmessages[]
 
 const express = require("express");
 const app = express();
 
+app.use(express.static("."))
 app.use(express.urlencoded({ extended: true }));
 
 // respond with "hello world" when a GET request is made to the homepage
@@ -22,12 +27,17 @@ app.get("/", function (req, res) {
 
 app.get("/messages", function (req, res) {
   res.set({ "Content-Type": "text/html" });
-  let messagesHtml = messages.map((message) => `<p>${message}</p>`).join("");
+  let messagesHtml = bmessages.map((message) => `<p>${message}</p>`).join("");
   res.send(messagesHtml);
 });
 
 app.post("/new-message", function (req, res) {
   messages.push(req.body.message);
+  bmessages.push(req.body.message);
+  bmessages2 = bmessages;
+  bmessages2 = JSON.stringify(bmessages2);
+  fs.writeFileSync("b-messages.json",bmessages2);
+  console.log(bmessages);
   res.sendStatus(200);
 });
 
