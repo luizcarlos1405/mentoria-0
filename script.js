@@ -1,7 +1,6 @@
-function limparTexto() {
-  setTimeout(() => {
-    let caixaTexto = document.querySelector("input[name = content]");
+let button = document.querySelector('button[name = button-send]');
+let inputContent = document.querySelector('input[name = content]');
 
-    caixaTexto.value = " ";
-  }, 700);
-}
+button.addEventListener('click',()=>{setTimeout(() => {
+  inputContent.value = " ";
+}, 700)});
