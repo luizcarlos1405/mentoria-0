@@ -1,12 +1,12 @@
 const fs = require("fs");
 let messages = [];
-const fileContent = fs.readFile("b-messages.json", (err, data)=>{
-  if(err){
+const fileContent = fs.readFile("b-messages.json", (err, data) => {
+  if (err) {
     fs.writeFileSync("b-messages.json", "[]");
     return;
-  } 
+  }
   messages = JSON.parse(data);
-} )
+});
 // const fileContent = fs.readFileSync("b-messages.json").toString();
 
 const express = require("express");
