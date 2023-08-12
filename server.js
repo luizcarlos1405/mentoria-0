@@ -31,12 +31,14 @@ app.get("/", function (req, res) {
 
 app.get("/messages", function (req, res) {
   res.set({ "Content-Type": "text/html" });
-  const messagesHtml = messages.map((message) => `<p>${message}</p>`).join("");
+  const messagesHtml = messages
+    .map((message) => `<p>${message.name}: ${message.message}</p>`)
+    .join("");
   res.send(messagesHtml);
 });
 
 app.post("/new-message", function (req, res) {
-  messages.push(req.body.message);
+  messages.push({ name: req.body.name, message: req.body.message });
   const newFileContent = JSON.stringify(messages);
   fs.writeFileSync("b-messages.json", newFileContent);
   res.sendStatus(200);
