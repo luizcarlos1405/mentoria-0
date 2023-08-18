@@ -6,8 +6,28 @@ const fileContent = fs.readFile("b-messages.json", (err, data) => {
     return;
   }
   messages = JSON.parse(data);
+  ///treatment of previus objects
+  // for (objMessage of messages){
+  //   if(objMessage.name){
+  //     objMessage = {
+  //       ...objMessage,
+  //       userName: objMessage.name,
+  //       content: objMessage.message
+  //     }
+  //   };
+  //   if(objMessage.message){
+  //     objMessage = {
+  //       ...objMessage,
+  //       userName: objMessage.name,
+  //       content: objMessage.message
+  //     }
+  //   };
+  // }
 });
 // const fileContent = fs.readFileSync("b-messages.json").toString();
+
+
+
 
 const express = require("express");
 const app = express();
