@@ -6,28 +6,33 @@ const fileContent = fs.readFile("b-messages.json", (err, data) => {
     return;
   }
   messages = JSON.parse(data);
-  ///treatment of previus objects
-  // for (objMessage of messages){
-  //   if(objMessage.name){
-  //     objMessage = {
-  //       ...objMessage,
-  //       userName: objMessage.name,
-  //       content: objMessage.message
-  //     }
-  //   };
-  //   if(objMessage.message){
-  //     objMessage = {
-  //       ...objMessage,
-  //       userName: objMessage.name,
-  //       content: objMessage.message
-  //     }
-  //   };
-  // }
+
+  function replaceKeysExcept(object) {
+    console.log(object);
+    // { a: 1, b: 2} => [["a", 1], ["b", 2]]
+    return Object.fromEntries(
+      Object.entries(object).map(([key, value]) => {
+        console.log(key);
+        console.log(value);
+        // const [key, value] = entry;
+        // const key = entry[0];
+        // const value = entry[1];
+  
+        if (key === "name") {
+          return ["userName", value];
+        }
+  
+        if (key === "message") {
+          return ["content", value];
+        }
+  
+        return [key, value];
+      }),
+    );
+  }
+  
+  console.log(messages.map(replaceKeysExcept));
 });
-// const fileContent = fs.readFileSync("b-messages.json").toString();
-
-
-
 
 const express = require("express");
 const app = express();
