@@ -1,6 +1,11 @@
-const fs = require("fs");
-const express = require("express");
-const app = express();
+import { mongoClient } from "./mongo.js";
+import fs from "fs";
+import express from "express";
+
+// MONGO CONNECTION
+const db = mongoClient.db("mentoria0");
+const Messages = db.collection("messages");
+// Messages.insertOne({ userName: "Luiz", content: "message" });
 
 // RUN MIGRATIONS
 function replaceKeysExcept(object) {
@@ -51,6 +56,8 @@ if (migrationFunction) {
 }
 
 // SETUP SERVER
+const app = express();
+
 app.use(express.static("."));
 app.use(express.urlencoded({ extended: true }));
 
@@ -68,18 +75,17 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/messages", function (req, res) {
+app.get("/messages", async function (req, res) {
   res.set({ "Content-Type": "text/html" });
 
-  fs.readFile("messages.json", "utf8", (err, messagesJson) => {
-    const messages = JSON.parse(messagesJson);
-    const messagesHtml = messages
-      .map((message) => `<p>${message.userName}: ${message.content}</p>`)
-      .join("");
+  const messages = await Messages.find({ userName: "Luiz" }).toArray();
 
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(messagesHtml);
-  });
+  const messagesHtml = messages
+    .map((message) => `<p>${message.userName}: ${message.content}</p>`)
+    .join("");
+
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.end(messagesHtml);
 });
 
 app.post("/new-message", function (req, res) {
