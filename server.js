@@ -1,4 +1,5 @@
 import { mongoClient } from "./mongo.js";
+import fsPromises from "fs/promises";
 import fs from "fs";
 import express from "express";
 
@@ -25,7 +26,7 @@ function replaceKeysExcept(object) {
       }
 
       return [key, value];
-    }),
+    })
   );
 }
 
@@ -33,14 +34,22 @@ const migrations = {
   ["1"]: replaceKeysExcept,
 };
 
-const migrationStatus = JSON.parse(
-  fs.readFileSync("migration-status.json", "utf8"),
-);
+//Tratamento de migration-status caso não haja o arquivo
+const promise1 = fsPromises.readFile("migration-status.json", "utf8");
+
+const fileContent = await promise1.catch(async () => {
+  await fsPromises.writeFile("migration-status.json","{}");
+  return fsPromises.readFile("migration-status.json", "utf8");
+});
+
+const migrationStatus = JSON.parse(fileContent);
+
 const lastRunnedMigration = migrationStatus.lastRunnedMigration || 0;
 const migrationFunction = migrations[lastRunnedMigration + 1];
 
 if (migrationFunction) {
   fs.readFile("messages.json", "utf8", (err, messagedJson) => {
+    if (err) return;
     const data = JSON.parse(messagedJson);
     const migratedData = data.map(migrationFunction);
 
@@ -50,7 +59,7 @@ if (migrationFunction) {
     fs.writeFileSync("messages.json", newFileContent);
     fs.writeFileSync(
       "migration-status.json",
-      JSON.stringify({ lastRunnedMigration: lastRunnedMigration + 1 }),
+      JSON.stringify({ lastRunnedMigration: lastRunnedMigration + 1 })
     );
   });
 }
