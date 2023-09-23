@@ -16,16 +16,32 @@ mongoose.connect(uri).then(()=>{
     console.log("Failed")
 });
 
-const userSchema = new mongoose.Schema({
+const messageSchema = new mongoose.Schema({
     user:{
         type:String,
         required:true
     },
-    
     msg:{
         type:String,
         required:true
     }
 });
 
-export const messagesCollection = new mongoose.model("Messages", userSchema);
+export const messagesCollection = new mongoose.model("Messages", messageSchema);
+
+const usersSchema = new mongoose.Schema({
+    handle:{
+        type:String,
+        required:true
+    },
+    name:{
+        type:String,
+        required:true
+    },
+    password:{//this is wrong is only for education, use authenticator
+        type: String,
+        required:true
+    }
+});
+
+export const usersCollection = new mongoose.model("Users", usersSchema);
