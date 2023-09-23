@@ -1,68 +1,7 @@
-import { mongoClient } from "./mongo.js";
-import fsPromises from "fs/promises";
-import fs from "fs";
+import mongoose from "mongoose";
+import { messagesCollection } from "./mongo.js"; //perguntar do porque das chaves para o luiz
 import express from "express";
-
-// MONGO CONNECTION
-const db = mongoClient.db("mentoria0");
-const Messages = db.collection("messages");
-// Messages.insertOne({ userName: "Luiz", content: "message" });
-
-// RUN MIGRATIONS
-function replaceKeysExcept(object) {
-  // { a: 1, b: 2} => [["a", 1], ["b", 2]]
-  return Object.fromEntries(
-    Object.entries(object).map(([key, value]) => {
-      // const [key, value] = entry;
-      // const key = entry[0];
-      // const value = entry[1];
-
-      if (key === "name") {
-        return ["userName", value];
-      }
-
-      if (key === "message") {
-        return ["content", value];
-      }
-
-      return [key, value];
-    })
-  );
-}
-
-const migrations = {
-  ["1"]: replaceKeysExcept,
-};
-
-//Tratamento de migration-status caso não haja o arquivo
-const promise1 = fsPromises.readFile("migration-status.json", "utf8");
-
-const fileContent = await promise1.catch(async () => {
-  await fsPromises.writeFile("migration-status.json","{}");
-  return fsPromises.readFile("migration-status.json", "utf8");
-});
-
-const migrationStatus = JSON.parse(fileContent);
-
-const lastRunnedMigration = migrationStatus.lastRunnedMigration || 0;
-const migrationFunction = migrations[lastRunnedMigration + 1];
-
-if (migrationFunction) {
-  fs.readFile("messages.json", "utf8", (err, messagedJson) => {
-    if (err) return;
-    const data = JSON.parse(messagedJson);
-    const migratedData = data.map(migrationFunction);
-
-    console.log({ messages: data, migratedMessages: migratedData });
-
-    const newFileContent = JSON.stringify(migratedData);
-    fs.writeFileSync("messages.json", newFileContent);
-    fs.writeFileSync(
-      "migration-status.json",
-      JSON.stringify({ lastRunnedMigration: lastRunnedMigration + 1 })
-    );
-  });
-}
+import fs from "fs";
 
 // SETUP SERVER
 const app = express();
@@ -87,30 +26,25 @@ app.get("/", function (req, res) {
 app.get("/messages", async function (req, res) {
   res.set({ "Content-Type": "text/html" });
 
-  const messages = await Messages.find({ userName: "Luiz" }).toArray();
+  //bring some info from mongo
+  const messages = await messagesCollection
+    .find({
+      // user: "Luiz",
+    })
+    .exec();
 
   const messagesHtml = messages
-    .map((message) => `<p>${message.userName}: ${message.content}</p>`)
+    .map((message) => `<p>${message.user}: ${message.msg}</p>`)
     .join("");
-
-  res.writeHead(200, { "Content-Type": "text/html" });
   res.end(messagesHtml);
 });
 
 app.post("/new-message", function (req, res) {
-  fs.readFile("messages.json", "utf8", (err, messagesJson) => {
-    const messages = JSON.parse(messagesJson);
-    const newMessage = {
-      userName: req.body.userName,
-      content: req.body.content,
-    };
-    const newFileContent = JSON.stringify(messages);
-
-    messages.push(newMessage);
-
-    fs.writeFileSync("messages.json", newFileContent);
-    res.sendStatus(200);
-  });
+  //Saving on mongo
+  const user = req.body.userName; // the const name has to equal to the Schema
+  const msg = req.body.content; // the const name has to equal to the Schema
+  messagesCollection.insertMany([{ user, msg }]);
+  res.sendStatus(200);
 });
 
 // START SERVER

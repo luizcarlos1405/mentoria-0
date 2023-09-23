@@ -3,4 +3,4 @@ let inputContent = document.querySelector('input[name = content]');
 
 button.addEventListener('click',()=>{setTimeout(() => {
   inputContent.value = " ";
-}, 700)});
+}, 1000)});
