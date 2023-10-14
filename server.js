@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { messagesCollection } from "./mongo.js"; //perguntar do porque das chaves para o luiz
+import { messagesCollection, usersCollection } from "./mongo.js"; //perguntar do porque das chaves para o luiz
 import express from "express";
-import fs from "fs";
+import { sendHTML } from "./helpers.js";
 
 // SETUP SERVER
 const app = express();
@@ -11,16 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // respond with "hello world" when a GET request is made to the homepage
 app.get("/", function (req, res) {
-  fs.readFile("index.html", "utf8", (err, content) => {
-    if (err) {
-      res.writeHead(500, { "Content-Type": "text/plain" });
-      res.end("Internal Server Error");
-      return;
-    }
-
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(content);
-  });
+  sendHTML(res, "index.html");
 });
 
 app.get("/messages", async function (req, res) {
@@ -45,6 +36,30 @@ app.post("/new-message", function (req, res) {
   const msg = req.body.content; // the const name has to equal to the Schema
   messagesCollection.insertMany([{ user, msg }]);
   res.sendStatus(200);
+});
+
+app.get("/login", async function (req, res) {
+  sendHTML(res, "loginPage.html");
+});
+
+app.post("/login", async function (req, res) {
+  const { handle, password } = req.body;
+
+  const loggedUser = await usersCollection
+    .findOne({
+      handle,
+      password,
+    })
+    .exec();
+
+  // console.log(loggedUser);
+
+  if (!loggedUser) {
+    sendHTML(res, "loginPage.html", 401);
+    return;
+  }
+
+  res.writeHead(303, { Location: "/" }).end();
 });
 
 // START SERVER
