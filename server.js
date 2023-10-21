@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { messagesCollection, usersCollection } from "./mongo.js"; //perguntar do porque das chaves para o luiz
 import express from "express";
-import { sendHTML } from "./helpers.js";
+import { sendHTML } from "./src/helpers.js";
 
 // SETUP SERVER
 const app = express();
@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // respond with "hello world" when a GET request is made to the homepage
 app.get("/", function (req, res) {
-  sendHTML(res, "index.html");
+  sendHTML(res, "html/index.html");
 });
 
 app.get("/messages", async function (req, res) {
@@ -39,7 +39,7 @@ app.post("/new-message", function (req, res) {
 });
 
 app.get("/login", async function (req, res) {
-  sendHTML(res, "loginPage.html");
+  sendHTML(res, "html/loginPage.html");
 });
 
 app.post("/login", async function (req, res) {
@@ -52,12 +52,22 @@ app.post("/login", async function (req, res) {
     })
     .exec();
 
-  // console.log(loggedUser);
-
   if (!loggedUser) {
-    sendHTML(res, "loginPage.html", 401);
+    sendHTML(res, "html/loginPage.html", 401);
     return;
   }
+
+  res.writeHead(303, { Location: "/" }).end();
+});
+
+app.get("/signup", async function (req, res) {
+  sendHTML(res, "html/signup.html");
+});
+
+app.post("/signup", async function (req, res) {
+  const { name, handle, password } = req.body;
+
+  await usersCollection.create({ handle, name, password });
 
   res.writeHead(303, { Location: "/" }).end();
 });
@@ -67,3 +77,7 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+// 1º: colocar o handle como unique (x  )
+
+// 2º: tratar erros no cadastro do usuario

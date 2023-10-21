@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastre-se</title>
+</head>
+<body>
+    <form id="form" action="/signup" method="post">
+        <h2>Cadastro</h2>
+        <label for="name">Nome</label>
+        <input type="text" id="name" name="name" placeholder="Nome">
+        <label for="handle">Email</label>
+        <input type="text" id="handle" name="handle" placeholder="Handle"/>
+        <label for="password">Senha</label>
+        <input type="text" id="password" name="password" placeholder="Senha"/>
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+<style>
+    *{
+        margin: 0px;
+        padding: 0px;
+    }
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+
+    }
+    #form {
+        max-width: 400px;
+        width: 80vw;
+        padding: 30px 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid #a1a1a1;
+        border-radius: 15px;
+        box-shadow: 5px 5px 5px #00000041;
+    }
+    #form h2 {
+        margin-bottom: 20px;
+    }
+    #form input {
+        width: 80%;
+        margin-bottom: 20px
+    }
+    #form button {
+        background-color: rgb(128, 181, 77);
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+    }
+</style>
+</html>

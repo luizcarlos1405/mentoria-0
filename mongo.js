@@ -6,42 +6,46 @@
 //fourth put the schema on the post on you express
 //enjoy
 
-
 import mongoose from "mongoose";
-const uri = "mongodb://localhost:27017/mentoria";//if you want to change the db name just put some name after / 
+const uri = "mongodb://localhost:27017/mentoria"; //if you want to change the db name just put some name after /
 
-mongoose.connect(uri).then(()=>{
-    console.log('Mongo Online')
-}).catch(()=>{
-    console.log("Failed")
-});
+mongoose
+  .connect(uri)
+  .then(() => {
+    console.log("Mongo Online");
+  })
+  .catch(() => {
+    console.log("Failed");
+  });
 
 const messageSchema = new mongoose.Schema({
-    user:{
-        type:String,
-        required:true
-    },
-    msg:{
-        type:String,
-        required:true
-    }
+  user: {
+    type: String,
+    required: true,
+  },
+  msg: {
+    type: String,
+    required: true,
+  },
 });
 
 export const messagesCollection = new mongoose.model("Messages", messageSchema);
 
 const usersSchema = new mongoose.Schema({
-    handle:{
-        type:String,
-        required:true
-    },
-    name:{
-        type:String,
-        required:true
-    },
-    password:{//this is wrong is only for education, use authenticator
-        type: String,
-        required:true
-    }
+  handle: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  password: {
+    //this is wrong is only for education, use authenticator
+    type: String,
+    required: true,
+  },
 });
 
 export const usersCollection = new mongoose.model("Users", usersSchema);
